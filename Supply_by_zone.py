@@ -36,3 +36,23 @@ for index, row in df_gis.iterrows():
 
 # Display the first 16 rows of the DataFrame
 df_gis.head(16)
+
+
+#Water supply for zone 0:
+df_gis_zone_0 = df_gis[(df_gis['SECTOR_A'] == '0') | (df_gis['SECTOR_B'] == '0') | (df_gis['SECTOR_C'] == '0') | (df_gis['SECTOR_D'] == '0')]
+df_gis_zone_0 = df_gis_zone_0.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+#Water supply for zone 1:
+df_gis_zone_1 = df_gis[(df_gis['SECTOR_A'] == '1') | (df_gis['SECTOR_B'] == '1') | (df_gis['SECTOR_C'] == '1') | (df_gis['SECTOR_D'] == '1')]
+df_gis_zone_1 = df_gis_zone_1.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+#Water supply for zone 2:
+df_gis_zone_2 = df_gis[(df_gis['SECTOR_A'] == '2') | (df_gis['SECTOR_B'] == '2') | (df_gis['SECTOR_C'] == '2') | (df_gis['SECTOR_D'] == '2')]
+df_gis_zone_2 = df_gis_zone_2.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+#Water supply for zone 3:
+df_gis_zone_3 = df_gis[(df_gis['SECTOR_A'] == '3') | (df_gis['SECTOR_B'] == '3') | (df_gis['SECTOR_C'] == '3') | (df_gis['SECTOR_D'] == '3')]
+df_gis_zone_3 = df_gis_zone_3.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+
+
+print(df_gis_zone_0)
+print(df_gis_zone_1)
+print(df_gis_zone_2)
+print(df_gis_zone_3)
