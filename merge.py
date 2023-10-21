@@ -1,22 +1,19 @@
 import pandas as pd
 
-# Load your datasets
-clima_clean = pd.read_csv('clima_filtered.csv')
-Totalizador_zone_1 = pd.read_csv('Totalizador_zone_1.csv')
-Totalizador_zone_2 = pd.read_csv('Totalizador_zone_2.csv')
-Totalizador_zone_3 = pd.read_csv('Totalizador_zone_1.csv')
+# Read the datasets
+clima_df = pd.read_csv('clima_filtered.csv')
+totalizador_df = pd.read_csv('Totalizador_vf.csv')
 
-# Convert datetime columns to a consistent format in other datasets
-Totalizador_zone_1['RowKey'] = pd.to_datetime(Totalizador_zone_1['RowKey'], format='%Y-%m-%dT%H:%M:%S.%fZ')
-Totalizador_zone_2['RowKey'] = pd.to_datetime(Totalizador_zone_2['RowKey'], format='%Y-%m-%dT%H:%M:%S.%fZ')
-Totalizador_zone_3['RowKey'] = pd.to_datetime(Totalizador_zone_3['RowKey'], format='%Y-%m-%dT%H:%M:%S.%fZ')
+# Convert date strings to datetime objects
+clima_df['datetimeStr'] = pd.to_datetime(clima_df['datetimeStr'], utc=True)
+totalizador_df['RowKey'] = pd.to_datetime(totalizador_df['RowKey'], utc=True)
 
-# Merge clima_clean with each of the other datasets separately
-merged_data1 = pd.merge(clima_clean, Totalizador_zone_1, left_on='datetimeStr', right_on='RowKey', how='inner')
-merged_data2 = pd.merge(clima_clean, Totalizador_zone_2, left_on='datetimeStr', right_on='RowKey', how='inner')
-merged_data3 = pd.merge(clima_clean, Totalizador_zone_3, left_on='datetimeStr', right_on='RowKey', how='inner')
+# Merge the datasets on the common date column
+merged_df = pd.merge(clima_df, totalizador_df, left_on='datetimeStr', right_on='RowKey', how='inner')
 
-# Save the merged datasets to separate CSV files
-merged_data1.to_csv('merged_dataset1.csv', index=False)
-merged_data2.to_csv('merged_dataset2.csv', index=False)
-merged_data3.to_csv('merged_dataset3.csv', index=False)
+# Drop the unnamed column if it exists
+if 'Unnamed: 0' in merged_df.columns:
+    merged_df = merged_df.drop('Unnamed: 0', axis=1)
+
+# Save or further process the merged dataframe as needed
+merged_df.to_csv('merged_dataset.csv', index=False)
