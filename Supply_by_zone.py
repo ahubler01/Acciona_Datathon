@@ -11,6 +11,7 @@ from statsmodels.stats.multicomp import MultiComparison
 
 
 filtered_df_caudales = pd.read_csv("setDatos/caudales_filtered_1.csv")
+df_caudales = pd.read_csv("setDatos/caudales.csv")
 df_abon_clien_cont = pd.read_csv("setDatos/df_abon_clien_cont.csv")
 df_gis = pd.read_csv("setDatos/gis.csv")
 
@@ -55,22 +56,19 @@ for index, row in df_gis.iterrows():
     df_gis.at[index, "Number_zone"] = row_missing_values
 
 #Water supply for zone 0:
-df_gis_zone_1 = df_gis[(df_gis['SECTOR_A'] == '0') | (df_gis['SECTOR_B'] == '0') | (df_gis['SECTOR_C'] == '0') | (df_gis['SECTOR_D'] == '0')]
-df_gis_zone_1 = df_gis_zone_1.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
 #Water supply for zone 1:
-df_gis_zone_2 = df_gis[(df_gis['SECTOR_A'] == '1') | (df_gis['SECTOR_B'] == '1') | (df_gis['SECTOR_C'] == '1') | (df_gis['SECTOR_D'] == '1')]
-df_gis_zone_2 = df_gis_zone_2.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+df_gis_zone_1 = df_gis[(df_gis['SECTOR_A'] == '1') | (df_gis['SECTOR_B'] == '1') | (df_gis['SECTOR_C'] == '1') | (df_gis['SECTOR_D'] == '1')]
+df_gis_zone_1 = df_gis_zone_1.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
 #Water supply for zone 2:
-df_gis_zone_3 = df_gis[(df_gis['SECTOR_A'] == '2') | (df_gis['SECTOR_B'] == '2') | (df_gis['SECTOR_C'] == '2') | (df_gis['SECTOR_D'] == '2')]
-df_gis_zone_3 = df_gis_zone_3.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+df_gis_zone_2 = df_gis[(df_gis['SECTOR_A'] == '2') | (df_gis['SECTOR_B'] == '2') | (df_gis['SECTOR_C'] == '2') | (df_gis['SECTOR_D'] == '2')]
+df_gis_zone_2 = df_gis_zone_2.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
 #Water supply for zone 3:
-df_gis_zone_4 = df_gis[(df_gis['SECTOR_A'] == '3') | (df_gis['SECTOR_B'] == '3') | (df_gis['SECTOR_C'] == '3') | (df_gis['SECTOR_D'] == '3')]
-df_gis_zone_4 = df_gis_zone_4.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
+df_gis_zone_3 = df_gis[(df_gis['SECTOR_A'] == '3') | (df_gis['SECTOR_B'] == '3') | (df_gis['SECTOR_C'] == '3') | (df_gis['SECTOR_D'] == '3')]
+df_gis_zone_3 = df_gis_zone_3.drop(['SECTOR_A', 'SECTOR_B', 'SECTOR_C', 'SECTOR_D'], axis = 1)
 
-print(df_gis_zone_1)
+# print(df_gis_zone_1)
 # print(df_gis_zone_2)
 # print(df_gis_zone_3)
-# print(df_gis_zone_4)
 
 # df_caudales_test = pd.read_csv("setDatos/caudales.csv")
 # zone_1_code = df_gis_zone_1["code"]
@@ -85,9 +83,6 @@ zone_2_code = df_gis_zone_2["code"]
 filtered_df_caudales.loc[filtered_df_caudales['Sector_Neta'].isin(zone_2_code), 'Zone_2'] = True
 zone_3_code = df_gis_zone_3["code"]
 filtered_df_caudales.loc[filtered_df_caudales['Sector_Neta'].isin(zone_3_code), 'Zone_3'] = True
-zone_4_code = df_gis_zone_4["code"]
-filtered_df_caudales.loc[filtered_df_caudales['Sector_Neta'].isin(zone_4_code), 'Zone_4'] = True
-
 
 #Group by canonical
 grouped_canocical = filtered_df_caudales.groupby('Canonical')
@@ -96,13 +91,13 @@ for name, group in grouped_canocical:
     caudales_by_canonical.append(group)
 
 # Group by zone
-caudales_by_canonical_zone = {'Zone_1': [], 'Zone_2': [], 'Zone_3': [], 'Zone_4': []}
+caudales_by_canonical_zone = {'Zone_1': [], 'Zone_2': [], 'Zone_3': []}
 
 for df in caudales_by_canonical:
     caudales_by_canonical_zone['Zone_1'].append(df[df['Zone_1'].isin([True])])
     caudales_by_canonical_zone['Zone_2'].append(df[df['Zone_2'].isin([True])])
     caudales_by_canonical_zone['Zone_3'].append(df[df['Zone_3'].isin([True])])
-    caudales_by_canonical_zone['Zone_4'].append(df[df['Zone_4'].isin([True])])
+   
 
 #1. Caudal
 #2. Presion_entrada_sector
@@ -110,14 +105,20 @@ for df in caudales_by_canonical:
 #4. Totalizador
 #5. Volumen_diario
 
+
+
+result_dict = {}
+# Iterate through unique values in Column1 and collect unique values from Column2
+for key in df_caudales['Canonical'].unique():
+    unique_values = df_caudales[df_caudales['Canonical'] == key]['INF_Label'].unique()
+    result_dict[key] = unique_values.tolist()
+
 #Removing outliers in every subdf:
 
 # Remove outliers in every sublist
-caudales_by_canonical_zone_filtered = {'Zone_1': [], 'Zone_2': [], 'Zone_3': [], 'Zone_4': []}
+caudales_by_canonical_zone_filtered = {'Zone_1': [], 'Zone_2': [], 'Zone_3': []}
 for zone in caudales_by_canonical_zone:
-    for i in range(len(caudales_by_canonical_zone[zone])):
-        canonical = caudales_by_canonical_zone[zone][i]
-
+    for canonical in zone:
         # Loop through each numerical column and filter out the outliers
         for column in canonical.select_dtypes(include=['float64', 'int64']).columns:
             z_scores = stats.zscore(canonical[column])
@@ -152,10 +153,10 @@ for zone in caudales_by_canonical_zone:
         data_cleaned = canonical[(canonical['INF_Value'] >= lower_bound) & (canonical['INF_Value'] <= upper_bound)]
 
 
-        caudales_by_canonical_zone_filtered['Zone_1'].append(data_cleaned[data_cleaned['Zone_1'].isin([True])])
-        caudales_by_canonical_zone_filtered['Zone_2'].append(data_cleaned[data_cleaned['Zone_2'].isin([True])])
-        caudales_by_canonical_zone_filtered['Zone_3'].append(data_cleaned[data_cleaned['Zone_3'].isin([True])])
-        caudales_by_canonical_zone_filtered['Zone_4'].append(data_cleaned[data_cleaned['Zone_4'].isin([True])])
+        # caudales_by_canonical_zone_filtered['Zone_1'].append(data_cleaned[data_cleaned['Zone_1'].isin([True])])
+        # caudales_by_canonical_zone_filtered['Zone_2'].append(data_cleaned[data_cleaned['Zone_2'].isin([True])])
+        # caudales_by_canonical_zone_filtered['Zone_3'].append(data_cleaned[data_cleaned['Zone_3'].isin([True])])
+        # caudales_by_canonical_zone_filtered['Zone_4'].append(data_cleaned[data_cleaned['Zone_4'].isin([True])])
 
 
 
@@ -188,5 +189,8 @@ for zone in caudales_by_canonical_zone:
 # most_common_df.rename(columns={'time_difference': 'most_common_time_difference'}, inplace=True)
 #
 # print(most_common_df)
+
+
+
 
 
