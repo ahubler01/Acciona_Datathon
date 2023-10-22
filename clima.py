@@ -3,14 +3,8 @@ import pandas as pd
 
 df = pd.read_csv("clima.csv")
 
-# List of columns to drop
-columns_to_drop = ['mint', 'maxt', 'wspd', 'wgust', 'wdir', 'info', 'snow', 'sealevelpressure', 'snowdepth', 'heatindex', 'weathertype', 'conditions']
-
-# Drop the specified columns
-df = df.drop(columns=columns_to_drop)
-
 # Columns to fill missing values for
-columns_to_fill = ['cloudcover', 'temp', 'visibility', 'solarenergy', 'datetime', 'precip', 'solarradiation', 'dew', 'humidity', 'precipcover', 'windchill']
+columns_to_fill = ['wdir', 'maxt', 'mint', 'snow', 'wspd', 'wgust', 'sealevelpressure', 'heatindex', 'snowdepth', 'cloudcover', 'temp', 'visibility', 'solarenergy', 'datetime', 'precip', 'solarradiation', 'dew', 'humidity', 'precipcover', 'windchill']
 
 # Iterate through rows and fill missing values in the specified columns
 for index, row in df.iterrows():
@@ -33,6 +27,8 @@ for index, row in df.iterrows():
                 df.at[index, column_to_fill] = df.at[before_index, column_to_fill]
             elif after_index < len(df):
                 df.at[index, column_to_fill] = df.at[after_index, column_to_fill]
+
+df
                 
 # Set Coordinates range
 lat1 = 39.234068
